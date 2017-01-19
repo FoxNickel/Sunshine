@@ -1,0 +1,112 @@
+第 1 课的复习材料
+恭喜您学完第 1 课！您已取得了很大的进展：您创建了第一个应用，并学习了许多基本的 Android 概念。我们研究了用于创建应用的工具，其中包括 Android Studio、Android SDK、真实的和模拟的测试设备以及 Gradle 编译系统。我们还研究了构成 Android 应用的一些核心类，其中包括Activity、Fragment、Layout、View、ListView 和 Adapter。
+
+新概念
+Android Studio
+SDK - 目标和最低
+模拟器与真实设备
+Gradle
+应用程序
+Activity
+Fragment
+View 和 ViewGroup
+View 和 XML 布局
+ListView
+Adapter
+Android Studio
+
+Android Studio 是我们在课程中使用的 IDE。在您启动新应用时，Android Studio 中会创建一个项目。每个项目都包含一个或多个模块，它们对应于应用程序的每个逻辑部分。为了确保模块名称唯一，模块命名约定将使用颠倒的互联网域名。
+
+查看这里来了解 Android Studio 如何管理你的项目。
+
+下面回顾了 Android Studio 中的一些重要按钮。
+
+此按钮决定着项目结构的显示方式。在课程中，我们使用项目视图，但 Android 视图也是组织文件的便利方式。
+这是运行按钮。此按钮将项目的当前状态作为 apk 保存和编译，然后在连接到计算机的 Android 手机上或在模拟器上启动它。
+这是调试按钮。它按以上所述运行代码，但会连接 Android 调试器，让您可以执行在断点处停止和逐步调试代码等操作。
+这是 AVD 管理器按钮。此按钮可打开 Android 虚拟设备管理器，它允许您创建、删除、运行和编辑 Android 模拟器。
+这是 SDK 管理器按钮。SDK 管理器允许您为不同的 Android API 下载新 SDK。
+这是 Android 设备监视器按钮。Android 设备监视器显示你的真实手机和模拟器的大量信息。例如，你可以执行基本性能分析，以及查看文件系统包含哪些内容。
+SDK - 目标和最低
+
+创建新项目时，需要定义最低 SDK（软件开发套件）。SDK 是您下载的一组工具，可让您编译和创建 Android 项目。SDK 与 API 级别匹配，因此，在发布新的 API 级别时，也会发布新的 SDK，以便创建该级别的项目。安装 Android Studio 时，会自动下载当前的 SDK。
+
+最低 SDK 是应用程序计划支持的 Android API 最低级别。在我们的例子中，我们支持 API 级别 10，它包括了所有运行 Gingerbread 及更高版本的设备。此级别将支持市面上 99% 的设备。
+
+目标 SDK 是自动为您定义的，并且是您在编译和测试应用时使用的 SDK。它应为最新的 SDK。
+
+模拟器与真实设备
+
+下载 Android Studio 1.0 时，它附带了手机模拟器。运行应用，选择Launch Emulator， 然后选择模拟器，就可以在计算机上启动此手机模拟器。
+
+有时候手机模拟器会在黑屏或类似下图的加载过程中停止响应：
+
+如果遇到此情况，请查看 Android Studio 中的错误消息。常见的消息为：
+
+/Android/sdk/tools/emulator -avd _Nexus_5_API_21_x86 -netspeed full -netdelay none
+emulator: The memory needed by this VM exceeds the driver limit.
+HAX is not working and emulator runs in emulation mode
+这表示计算机的速度不够快，无法运行默认的模拟器。请勿担心；请按照 Katherine 的说明创建新的模拟器，并减少模拟器使用的 RAM。您可以在以下配置屏幕中这样做：
+
+模拟器很有用，但它们可能会有点慢。建议您尽可能使用真实设备。您需要按照此视频中的步骤将开发者模式解锁，这最终会使性能更快、体验更流畅。
+
+如果只想使用模拟器，请考虑安装 Genymotion。此处提供了这样做的步骤。
+
+Gradle
+
+Gradle 是用于打包并编译 Android 应用的编译系统。Android Studio 会自动为应用程序生成 Gradle 文件，其中包括与应用和模块对应的 build.gradle，以及与应用对应的 settings.gradle。您无需创建这些文件。可以通过终端运行 Gradle（详见这个视频），但也可以使用运行按钮（它自动在项目中运行 Gradle 脚本）。要详细了解 Android Studio 和 Gradle 自动为您处理的编译过程，请查看开发者指南。
+
+提示：如果项目遇到 Gradle 问题，有时候单击Sync Project with Gradle Files 按钮会有帮助。运行清理功能和重新编译项目也可以帮助解决错误。
+
+应用程序
+
+您可能知道从用户的角度来看 Android 应用程序（例如 Gmail 或 Keep）是什么样的，但是，从开发者的角度来看，应用程序是什么样的呢？应用程序由很多与用户互动的类组成。我们在这一课中学到了各种 UI 组件由 Activity 管理。而幕后工作由其他 Android 类处理，其中包括：
+
+Content Providers（第 4 课）用来管理应用数据。
+Services（第 6 课）运行无 UI 的后台任务，例如下载信息或播放音乐。
+Broadcast Receivers（第 6 课）监听和响应系统公告，例如屏幕被点亮或失去网络连接。
+Activity
+
+Activity 是 Android 应用中与用户交互的组件，也是 Android 中的核心类。使用 Android Studio 创建应用时，它会创建一个在应用启动时出现的初始 Activity 类。此 Activity 的默认名称是 MainActivity。 Activity 应该让用户可以专注得执行某件事，大致对应于应用的一个屏幕。
+
+Fragment
+
+Activity 可以包含一个或多个 Fragment。Fragment 是 Activity 的模块化部分，通常用来显示 UI。两个 Activity 可以具有相同的Fragment，并且可以从一个Activity中添加或删除多个Fragment。我们为 Sunshine 创建了具有空白 Fragment 的Activity。PlaceholderFragment 自动作为Activity 的内部类生成，但Fragment不必须是内部类。
+
+View 和 ViewGroup
+
+视图(View)是用户界面的基本构件。Fragment 可以由多个视图组成，共同定义其布局。按钮、文本和其他小部件是视图的子类，而且可以在 ViewGroup 中组合，以创建更大的布局。常见的 ViewGroup 包括：
+
+LinearLayout - 用于横向或竖向依次摆放视图的布局。
+RelativeLayout - 用于定义与父视图和兄弟视图的相对位置的布局。
+FrameLayout - 用于单个子视图。
+由于视图嵌套在其他视图中，因此，这会为每个布局创建树状的视图结构。
+
+View 和 XML 布局
+
+为了描述用户界面，我们使用 XML 来描述布局。布局定义视图、ViewGroup 和两者之间关系的集合。我们的布局存储在 app/src/main/res/layout 目录中。为了将 xml 布局转换为 java 视图对象，需要 inflate 布局。inflate 布局后，需要将其与 Activity 或 Fragment 关联。这个 inflate 和关联的过程可能会略有不同，具体取决于是 Activity 的布局还是 Fragment 的布局。
+
+对于 Activity
+
+在 Activity 类的 onCreate 中，调用 setContentView 方法 inflate 布局并将其与 Activity 关联：
+
+setContentView(R.layout.activity_main);
+对于 Fragment
+
+在 Fragment 类中，我们在 onCreateView 方法（包含 LayoutInflater 参数）中 inflate 布局：
+
+View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+LayoutInflater 的 inflate 方法返回根视图或包含所有其他视图的视图元素。然后，我们应为 onCreateView 返回此 rootView。
+ListView
+
+ListView 是视图的子类，它经过优化，可通过显示列表项布局的多个副本来显示列表。我们将使用 ListView 在 Sunshine 中显示天气信息。天气信息的每一行均由名为 list_item_forecast.xml 的布局定义。列表视图包含 ｀list_item_forecast.xml｀ 的多个副本，每个副本对应天气数据的每一行。
+
+Adapter 用于填充 ListView。
+
+Adapter
+
+适配器 (Adapter) 将数据源转换为供 ListView 显示的视图。在我们的例子中，我们使用了 ArrayAdapter 将一个数组用作数据源，并使用该数组中的数据来填充 ListView。请观看相应的视频，以了解此过程如何工作。
+
+学习更多
+既然您已开始充分体验了 Android Studio，请观看这个纳米学位专属网络直播（英文） 和 网络直播配套文档 ，学习Android Stduent使用的技巧、诀窍和故障排除方法。
