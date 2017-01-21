@@ -269,9 +269,10 @@ public class ForecastFragment extends Fragment {
         protected void onPostExecute(String[] result) {
             if (result != null) {
                 adapter.clear();
-                for (String dayForecastStr : result) {
+                /*for (String dayForecastStr : result) {
                     adapter.add(dayForecastStr);
-                }
+                }*/
+                adapter.addAll(result);
                 // New data is back from the server.  Hooray!
             }
         }
