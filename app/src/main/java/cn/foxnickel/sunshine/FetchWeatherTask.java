@@ -1,3 +1,4 @@
+/*
 package cn.foxnickel.sunshine;
 
 import android.net.Uri;
@@ -17,17 +18,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
+*/
 /**
  * Created by Administrator on 2017/1/20.
- */
+ *//*
+
 
 public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-    /* The date/time conversion code is going to be moved outside the asynctask later,
+    */
+/* The date/time conversion code is going to be moved outside the asynctask later,
          * so for convenience we're breaking it out into its own method now.
-         */
+         *//*
+
     private String getReadableDateString(long time) {
         // Because the API returns a unix timestamp (measured in seconds),
         // it must be converted to milliseconds in order to be converted to valid date.
@@ -35,9 +40,11 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         return shortenedDateFormat.format(time);
     }
 
-    /**
+    */
+/**
      * Prepare the weather high/lows for presentation.
-     */
+ *//*
+
     private String formatHighLows(double high, double low) {
         // For presentation, assume the user doesn't care about tenths of a degree.
         long roundedHigh = Math.round(high);
@@ -47,13 +54,15 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         return highLowStr;
     }
 
-    /**
+    */
+/**
      * Take the String representing the complete forecast in JSON Format and
      * pull out the data we need to construct the Strings needed for the wireframes.
      * <p>
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
-     */
+ *//*
+
     private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
             throws JSONException {
 
@@ -117,11 +126,23 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
         }
 
-        for (String s : resultStrs) {
+        */
+/*for (String s : resultStrs) {
             Log.i(LOG_TAG, "Forecast entry: " + s);
-        }
+        }*//*
+
         return resultStrs;
 
+    }
+
+    @Override
+    protected void onPostExecute(String[] strings) {
+        if(strings!=null){
+            for (String s:strings
+                 ) {
+                Log.i(LOG_TAG,s);
+            }
+        }
     }
 
     @Override
@@ -133,20 +154,26 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String forecastJsonStr = null;//查询得到的字符串
-        /*查询数据需要的参数*/
+        */
+/*查询数据需要的参数*//*
+
         String format = "json";
         String units = "metric";
         int numDays = 7;
         String appid = "97056b3b38944b922083c074a9e119da";
         try {
-            /*构建uri时需要用到的参数*/
+            */
+/*构建uri时需要用到的参数*//*
+
             final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
             final String QUERY_PARAM = "q";
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
             final String APPID_PARAM = "APPID";
-            /*构建Uri*/
+            */
+/*构建Uri*//*
+
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, params[0])
                     .appendQueryParameter(FORMAT_PARAM, format)
@@ -157,7 +184,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             URL url = new URL(builtUri.toString());
             Log.i(LOG_TAG, "Built URI " + builtUri.toString());
 
-            /*开始Http请求*/
+            */
+/*开始Http请求*//*
+
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -195,7 +224,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             }
         }
 
-        /*解析json数据*/
+        */
+/*解析json数据*//*
+
         try {
             getWeatherDataFromJson(forecastJsonStr, numDays);
         } catch (JSONException e) {
@@ -204,3 +235,4 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         return null;
     }
 }
+*/
