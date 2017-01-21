@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,9 +76,33 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             }
             forecastJsonStr = buffer.toString();
             Log.i(LOG_TAG, forecastJsonStr);
+
+
+            /*解析json数据*/
+            JSONObject data = new JSONObject(forecastJsonStr);
+            Log.i(LOG_TAG, "maxTemp:" + data.getJSONArray("list").
+                    getJSONObject(0).
+                    getJSONObject("temp").
+                    getString("max"));
+            Log.i(LOG_TAG, "minTemp:" + data.getJSONArray("list").
+                    getJSONObject(0).
+                    getJSONObject("temp").
+                    getString("min"));
+            Log.i(LOG_TAG, "weather:" + data.getJSONArray("list").
+                    getJSONObject(0).
+                    getJSONArray("weather").
+                    getJSONObject(0).
+                    getString("main"));
+            Log.i(LOG_TAG, "weather description:" + data.getJSONArray("list").
+                    getJSONObject(0).
+                    getJSONArray("weather").
+                    getJSONObject(0).
+                    getString("description"));
         } catch (IOException e) {
             Log.e("ForecastFragment", "Error ", e);
             forecastJsonStr = null;
+        } catch (JSONException e) {
+            e.printStackTrace();
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

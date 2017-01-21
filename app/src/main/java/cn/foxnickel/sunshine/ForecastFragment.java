@@ -1,6 +1,5 @@
 package cn.foxnickel.sunshine;
 
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +17,7 @@ import java.util.Arrays;
 
 public class ForecastFragment extends Fragment {
     public ForecastFragment() {
+
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("94043");
+            weatherTask.execute("94043");//传递参数到FetchWeatherTask
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -45,6 +45,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        /*假数据（数组）用来填充listview*/
         String[] data = {
                 "Mon 6/23 - Sunny - 31/17",
                 "Tue 6/24 - Foggy - 21/8",
@@ -54,9 +55,14 @@ public class ForecastFragment extends Fragment {
                 "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
                 "Sun 6/29 - Sunny - 20/7"
         };
-        ArrayList<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textview,weekForecast);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);//构建界面
+        ArrayList<String> weekForecast = new ArrayList<String>(Arrays.asList(data));//传递给adapter的list
+        /*listview的adapter*/
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getActivity(),//Context
+                R.layout.list_item_forecast,//listview加载的布局文件
+                R.id.list_item_forecast_textview,//数据要加载到的控件id
+                weekForecast);//要加载的数据项
         ListView weatherList = (ListView) rootView.findViewById(R.id.listview_forecast);
         weatherList.setAdapter(adapter);
         return rootView;
