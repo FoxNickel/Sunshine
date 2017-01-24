@@ -1,6 +1,7 @@
 package cn.foxnickel.sunshine;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,7 +84,11 @@ public class ForecastFragment extends Fragment {
         weatherList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), adapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(getActivity(), adapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();*/
+                String forecast = adapter.getItem(position);
+                Intent startDetailActivity = new Intent(getActivity(), DetailActivity.class);
+                startDetailActivity.putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(startDetailActivity);
             }
         });
         return rootView;
@@ -186,9 +190,9 @@ public class ForecastFragment extends Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
-            for (String s : resultStrs) {
+            /*for (String s : resultStrs) {
                 Log.i(LOG_TAG, "Forecast entry: " + s);
-            }
+            }*/
             return resultStrs;
 
         }
@@ -224,7 +228,7 @@ public class ForecastFragment extends Fragment {
                         .appendQueryParameter(APPID_PARAM, appid)
                         .build();
                 URL url = new URL(builtUri.toString());
-                Log.i(LOG_TAG, "Built URI " + builtUri.toString());
+                /*Log.i(LOG_TAG, "Built URI " + builtUri.toString());*/
 
             /*开始Http请求*/
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -247,7 +251,7 @@ public class ForecastFragment extends Fragment {
                     forecastJsonStr = null;
                 }
                 forecastJsonStr = buffer.toString();//得到json字符串
-                Log.i(LOG_TAG, forecastJsonStr);
+                /*Log.i(LOG_TAG, forecastJsonStr);*/
             } catch (IOException e) {
                 Log.e("ForecastFragment", "Error ", e);
                 forecastJsonStr = null;
