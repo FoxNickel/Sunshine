@@ -5,6 +5,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -20,12 +21,13 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add 'general' preferences, defined in the XML file
-        // TODO: Add preferences from XML
-
+        /*加载Preference布局到SettingsActivity*/
+        addPreferencesFromResource(R.xml.pref_general);
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
         // TODO: Add preferences
+        /*改变EditPreference后会获取到值*/
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
     }
 
     /**
@@ -60,6 +62,7 @@ public class SettingsActivity extends PreferenceActivity
         } else {
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
+            Log.i(this.getClass().getSimpleName(), stringValue);
         }
         return true;
     }
