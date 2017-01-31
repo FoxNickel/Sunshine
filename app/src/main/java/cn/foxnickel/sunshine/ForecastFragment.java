@@ -1,7 +1,9 @@
 package cn.foxnickel.sunshine;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -54,6 +56,8 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             FetchWeatherTask weatherTask = new FetchWeatherTask();
+            SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.pref_location_key), Context.MODE_PRIVATE);
+            Log.i("hhh", preferences.getString(getString(R.string.pref_location_key), null));
             weatherTask.execute("xihe");
             return true;
         } else if (id == R.id.action_settings) {
@@ -159,7 +163,6 @@ public class ForecastFragment extends Fragment {
 
             // now we work exclusively in UTC
             dayTime = new Time();
-
             String[] resultStrs = new String[numDays];
             for (int i = 0; i < weatherArray.length(); i++) {
                 // For now, using the format "Day, description, hi/low"
