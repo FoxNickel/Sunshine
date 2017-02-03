@@ -1,12 +1,12 @@
 package cn.foxnickel.sunshine;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ForecastFragment extends Fragment {
+    private final String LOG_TAG = getClass().getSimpleName();
     private ArrayAdapter<String> adapter;
     public ForecastFragment() {
     }
@@ -56,9 +57,10 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             FetchWeatherTask weatherTask = new FetchWeatherTask();
-            SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.pref_location_key), Context.MODE_PRIVATE);
-            Log.i("hhh", preferences.getString(getString(R.string.pref_location_key), null));
-            weatherTask.execute("xihe");
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+            Log.i(LOG_TAG, location);
+            weatherTask.execute(location);
             return true;
         } else if (id == R.id.action_settings) {
             startActivity(new Intent(getActivity(), SettingsActivity.class));
