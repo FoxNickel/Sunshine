@@ -73,6 +73,20 @@ public class ForecastFragment extends Fragment {
             return true;
         } else if (id == R.id.action_settings) {
             startActivity(new Intent(getActivity(), SettingsActivity.class));
+        } else if (id == R.id.action_map) {
+            /*如果有地图软件就会响应该Intent*/
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+            Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
+                    .appendQueryParameter("q", location).build();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(geoLocation);
+
+            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
+            }
         }
         return super.onOptionsItemSelected(item);
     }
