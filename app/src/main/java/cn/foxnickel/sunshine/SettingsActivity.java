@@ -27,6 +27,7 @@ public class SettingsActivity extends PreferenceActivity
         // TODO: Add preferences
         /*改变EditPreference后会获取到值*/
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_temperature_unit_key)));
     }
 
     /**
