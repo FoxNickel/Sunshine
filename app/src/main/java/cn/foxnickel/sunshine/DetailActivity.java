@@ -13,6 +13,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private ShareActionProvider mProvider;
     private String forecastStr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,8 @@ public class DetailActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (id == R.id.action_simple_share) {
+            startActivity(createShareForecastIntent());
         }
         return super.onOptionsItemSelected(item);
     }
