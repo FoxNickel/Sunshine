@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/action_share"
+        android:showAsAction="always"
+        tools:ignore="AppCompatResource"
+        android:title="@string/action_share"
+        android:actionProviderClass="android.widget.ShareActionProvider" />
+
     <item
         android:id="@+id/action_settings"
         android:showAsAction="never"
