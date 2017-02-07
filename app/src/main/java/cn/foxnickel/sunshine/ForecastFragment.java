@@ -61,7 +61,6 @@ public class ForecastFragment extends Fragment {
         FetchWeatherTask weatherTask = new FetchWeatherTask();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-        Log.i(LOG_TAG, location);
         weatherTask.execute(location);
     }
 
@@ -230,7 +229,6 @@ public class ForecastFragment extends Fragment {
             String format = "json";
             String units = "metric";
             SharedPreferences tempuratureUnit = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            Log.i(LOG_TAG, tempuratureUnit.getString(getString(R.string.pref_temperature_unit_key), getString(R.string.pref_temperature_unit_default)));
             units = tempuratureUnit.getString(getString(R.string.pref_temperature_unit_key), getString(R.string.pref_temperature_unit_default));
             int numDays = 7;
             String appid = "97056b3b38944b922083c074a9e119da";
