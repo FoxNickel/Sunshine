@@ -37,6 +37,7 @@ import java.util.ArrayList;
 public class ForecastFragment extends Fragment {
     private final String LOG_TAG = getClass().getSimpleName();
     private ArrayAdapter<String> adapter;
+
     public ForecastFragment() {
     }
 
@@ -49,7 +50,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateWeather();
+        updateWeather();//应用启动时更新天气数据
     }
 
     @Override
@@ -114,6 +115,7 @@ public class ForecastFragment extends Fragment {
         return rootView;
     }
 
+    /*新开线程进行天气数据的获取*/
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
