@@ -26,8 +26,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
-
         </activity>
+
+        <provider
+            android:authorities="cn.foxnickel.sunshine.provider"
+            android:name="cn.foxnickel.sunshine.data.WeatherProvider" />
     </application>
 
 </manifest>
