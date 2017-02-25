@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package cn.foxnickel.sunshine;
 
 import android.content.ContentValues;
@@ -36,58 +21,36 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Vector;
-
 import cn.foxnickel.sunshine.data.WeatherContract.WeatherEntry;
+import cn.foxnickel.sunshine.data.WeatherContract;
 
+/*新开线程进行天气数据的获取*/
 public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
-    private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-
-    private ArrayAdapter<String> mForecastAdapter;
+    private final String LOG_TAG = getClass().getSimpleName();
+    private ArrayAdapter<String> adapter;
     private final Context mContext;
 
     public FetchWeatherTask(Context context, ArrayAdapter<String> forecastAdapter) {
         mContext = context;
-        mForecastAdapter = forecastAdapter;
+        adapter = forecastAdapter;
     }
 
-    private boolean DEBUG = true;
-
     /* The date/time conversion code is going to be moved outside the asynctask later,
-     * so for convenience we're breaking it out into its own method now.
-     */
+         * so for convenience we're breaking it out into its own method now.
+         */
     private String getReadableDateString(long time) {
         // Because the API returns a unix timestamp (measured in seconds),
         // it must be converted to milliseconds in order to be converted to valid date.
-        Date date = new Date(time);
-        SimpleDateFormat format = new SimpleDateFormat("E, MMM d");
-        return format.format(date).toString();
+        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
+        return shortenedDateFormat.format(time);
     }
 
     /**
      * Prepare the weather high/lows for presentation.
      */
     private String formatHighLows(double high, double low) {
-        // Data is fetched in Celsius by default.
-        // If user prefers to see in Fahrenheit, convert the values here.
-        // We do this rather than fetching in Fahrenheit so that the user can
-        // change this option without us having to re-fetch the data once
-        // we start storing the values in a database.
-        SharedPreferences sharedPrefs =
-                PreferenceManager.getDefaultSharedPreferences(mContext);
-        String unitType = sharedPrefs.getString(
-                mContext.getString(R.string.pref_temperature_unit_key),
-                mContext.getString(R.string.pref_units_metric));
-
-        if (unitType.equals(mContext.getString(R.string.pref_units_imperial))) {
-            high = (high * 1.8) + 32;
-            low = (low * 1.8) + 32;
-        } else if (!unitType.equals(mContext.getString(R.string.pref_units_metric))) {
-            Log.d(LOG_TAG, "Unit type not found: " + unitType);
-        }
-
         // For presentation, assume the user doesn't care about tenths of a degree.
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
@@ -123,23 +86,16 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         for (int i = 0; i < cvv.size(); i++) {
             ContentValues weatherValues = cvv.elementAt(i);
             String highAndLow = formatHighLows(
-                    weatherValues.getAsDouble(WeatherEntry.COLUMN_MAX_TEMP),
-                    weatherValues.getAsDouble(WeatherEntry.COLUMN_MIN_TEMP));
+                    weatherValues.getAsDouble(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP),
+                    weatherValues.getAsDouble(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP));
             resultStrs[i] = getReadableDateString(
-                    weatherValues.getAsLong(WeatherEntry.COLUMN_DATE)) +
-                    " - " + weatherValues.getAsString(WeatherEntry.COLUMN_SHORT_DESC) +
+                    weatherValues.getAsLong(WeatherContract.WeatherEntry.COLUMN_DATE)) +
+                    " - " + weatherValues.getAsString(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC) +
                     " - " + highAndLow;
         }
         return resultStrs;
     }
 
-    /**
-     * Take the String representing the complete forecast in JSON Format and
-     * pull out the data we need to construct the Strings needed for the wireframes.
-     *
-     * Fortunately parsing is easy:  constructor takes the JSON string and converts it
-     * into an Object hierarchy for us.
-     */
     private String[] getWeatherDataFromJson(String forecastJsonStr,
                                             String locationSetting)
             throws JSONException {
@@ -302,76 +258,64 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     @Override
     protected String[] doInBackground(String... params) {
 
-        // If there's no zip code, there's nothing to look up.  Verify size of params.
         if (params.length == 0) {
             return null;
         }
         String locationQuery = params[0];
-
-        // These two need to be declared outside the try/catch
-        // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-
-        // Will contain the raw JSON response as a string.
-        String forecastJsonStr = null;
-
+        String forecastJsonStr = null;//查询得到的字符串
+        /*查询数据需要的参数*/
         String format = "json";
         String units = "metric";
-        int numDays = 14;
-
+        SharedPreferences tempuratureUnit = PreferenceManager.getDefaultSharedPreferences(mContext);
+        units = tempuratureUnit.getString(mContext.getString(R.string.pref_temperature_unit_key), mContext.getString(R.string.pref_temperature_unit_default));
+        int numDays = 7;
+        String appid = "97056b3b38944b922083c074a9e119da";
         try {
-            // Construct the URL for the OpenWeatherMap query
-            // Possible parameters are avaiable at OWM's forecast API page, at
-            // http://openweathermap.org/API#forecast
-            final String FORECAST_BASE_URL =
-                    "http://api.openweathermap.org/data/2.5/forecast/daily?";
+            /*构建uri时需要用到的参数*/
+            final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
             final String QUERY_PARAM = "q";
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
-
+            final String APPID_PARAM = "APPID";
+            /*构建Uri*/
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, params[0])
                     .appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                    .appendQueryParameter(APPID_PARAM, appid)
                     .build();
-
             URL url = new URL(builtUri.toString());
+                /*Log.i(LOG_TAG, "Built URI " + builtUri.toString());*/
 
-            // Create the request to OpenWeatherMap, and open the connection
+            /*开始Http请求*/
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-            // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
-                // Nothing to do.
                 return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;
             while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
                 buffer.append(line + "\n");
             }
 
             if (buffer.length() == 0) {
-                // Stream was empty.  No point in parsing.
-                return null;
+                forecastJsonStr = null;
             }
-            forecastJsonStr = buffer.toString();
+            forecastJsonStr = buffer.toString();//得到json字符串
+                /*Log.i(LOG_TAG, forecastJsonStr);*/
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
-            // If the code didn't successfully get the weather data, there's no point in attemping
-            // to parse it.
-            return null;
+            Log.e("ForecastFragment", "Error ", e);
+            forecastJsonStr = null;
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -380,28 +324,28 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e("ForecastFragment", "Error closing stream", e);
                 }
             }
         }
 
+        /*解析json数据*/
         try {
             return getWeatherDataFromJson(forecastJsonStr, locationQuery);
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-        // This will only happen if there was an error getting or parsing the forecast.
         return null;
     }
 
     @Override
     protected void onPostExecute(String[] result) {
-        if (result != null && mForecastAdapter != null) {
-            mForecastAdapter.clear();
-            for (String dayForecastStr : result) {
-                mForecastAdapter.add(dayForecastStr);
-            }
+        if (result != null) {
+            adapter.clear();
+                /*for (String dayForecastStr : result) {
+                    adapter.add(dayForecastStr);
+                }*/
+            adapter.addAll(result);
             // New data is back from the server.  Hooray!
         }
     }
